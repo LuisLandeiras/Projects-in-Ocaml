@@ -8,10 +8,11 @@ let rec s n =
   | 1 -> 2
   |_  -> int_of_float((((6. *. (float_of_int (n) -. 2.) +. 9.) /. (float_of_int (n) +. 1.)) *. (float_of_int (s(n-1)))) -. (((float_of_int (n) -. 2.) /. (float_of_int (n) +. 1.)) *. (float_of_int (s(n-2)))))
   
+let i = 0
+
 let rec s1 n =
   count1 := !count1 + 1;
   k := 0;
-  let i = 0;
   while i != (n-2) do
     k := s1(i) * s1(n - i - 1) + !k
     i + 1
