@@ -1,25 +1,27 @@
 let count = ref 0
 let count1 = ref 0
-
+let k = ref 0
 let rec s n =
   count := !count + 1;
   match n with
     0 -> 1
   | 1 -> 2
   |_  -> int_of_float((((6. *. (float_of_int (n) -. 2.) +. 9.) /. (float_of_int (n) +. 1.)) *. (float_of_int (s(n-1)))) -. (((float_of_int (n) -. 2.) /. (float_of_int (n) +. 1.)) *. (float_of_int (s(n-2)))))
-
-let rec somatorio k n =
-  if k = n-2 then s(k) * s(n - k - 1)
-  else
-    s(k) * s(n - k - 1) + somatorio (k+1) n
   
-
 let rec s1 n =
   count1 := !count1 + 1;
+  k := 0;
+  let i = 0;
+  while i != (n-2) do
+    k := s1(i) * s1(n - i - 1) + !k
+    i + 1
+  done;
+  
   match n with
     0 -> 1
   | 1 -> 2
-  |_  -> 3 * s1(n - 1) + somatorio 1 n
+  | 2 -> 3 * s1(n-1)
+  |_  -> 3 * s1(n - 1) + !k
 
 let () =
 for i=0 to 20 do
