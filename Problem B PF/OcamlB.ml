@@ -33,7 +33,7 @@ let balance l v r =
     end else (* caso em que não há rotações por fazer *)
     node l v r
 
-
+(*Função retirada do pdf disponibilizado no Teams*)
 let rec add x = function
   | Folha ->
   N (Folha, x, Folha, 1)
@@ -43,6 +43,7 @@ let rec add x = function
   else if c < 0 then balance (add x l) v r
   else balance l v (add x r)
 
+(*Guarda o caminho para um elemento pretendido da árvore*)
 let rec path t number =
   match t with
   | Folha -> []
@@ -51,26 +52,64 @@ let rec path t number =
     else if number < v then v :: path l number
     else v :: path r number;;
 
-let g = ref (node Folha 1 Folha) in
-
-g := add 3 !g;
-g := add 5 !g;
-g := add 4 !g;
-g := add 6 !g;
-
-let list1 = path !g 6 in
-let list2 = path !g 1 in
-
 let aux = ref 0 in
 
-let mutacao list1 list2 = 
-  for i = 0 to (List.length list1 - 1) do
-    if (List.nth list1 i = List.nth list2 i) then
-      aux := !aux + 1
+(*Procura a mutação mais próxima e comum entre dois elementos selecionados*)
+let mutacao tree number1 number2 =
+  if (List.length (path tree number1)) >= (List.length (path tree number2)) then
+    (
+      for i = 0 to (List.length (path tree number2) - 1) do
+        if List.nth (path (tree) number1) i = List.nth (path (tree) number2) i then
+          aux := List.nth (path (tree) number1) i
+        else
+          aux := !aux
+      done;
+    )
+  else
+    (
+      for i = 0 to (List.length (path tree number1) - 1) do
+        if List.nth (path (tree) number1) i = List.nth (path (tree) number2) i then
+          aux := List.nth (path (tree) number1) i
+        else
+          aux := !aux
+      done;
+    );
+    print_int (!aux); print_newline() in
+
+let lista_arvores = ref [] in
+
+(*Procura um elemento da árvore e retorna true se existir false se não existir*)
+let rec procura arvore value =
+  match arvore with
+  | Folha -> false
+  | N (left, elemento, right, _) ->
+    if elemento = value then
+      true
+    else if value < elemento then
+      procura left value
     else
-      aux := !aux
+      procura right value in
+
+let () =
+  let forest = read_int() in
+  for i = 1 to forest do
+    let treesize = read_int () in
+    let first = read_int() in
+    let tree = ref (node Folha first Folha) in
+    for i = 0 to treesize - 2 do
+      let number = read_int () in
+      tree := add number !tree;
+    done;
+    lista_arvores := !tree :: !lista_arvores;
   done;
-  print_int (List.nth list1 (!aux - 1))
-
-
-
+  let b,a = Scanf.sscanf (read_line ()) " %d %d" (fun a b -> a,b) in
+  for i = 1 to ((List.length !lista_arvores)) do
+    if (procura (List.nth !lista_arvores (List.length !lista_arvores - i)) a) && (procura (List.nth !lista_arvores (List.length !lista_arvores - i)) b) then
+      mutacao (List.nth !lista_arvores (List.length !lista_arvores - i)) a b
+    else
+      aux := !aux;
+  done in
+  if(!aux = 0) then
+   (print_string "NO"; print_newline())
+  else
+    aux := !aux;
